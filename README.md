@@ -1,6 +1,7 @@
 # rhosp16-manual-deploy
 
 
+~~~
 ### 1.sh 
 
 #!/bin/bash
@@ -50,10 +51,11 @@ sudo dnf module disable -y virt:rhel
 sudo dnf module enable -y virt:8.2
 sudo dnf update -y
 reboot
-
+~~~
 
 ### 2.sh
 
+~~~
 echo  -e "\033[42;5m Enter Your RHN Username \033[0m"
 read username 
 echo  -e "\033[42;5m Enter Your RHN Password \033[0m"
@@ -92,10 +94,12 @@ masquerade = true
 
 
 openstack undercloud install
+~~~
 
 
 ### 3.sh
 
+~~~
 mkdir ~/images
 mkdir ~/templates
 cd  ~/images
@@ -105,11 +109,14 @@ sudo yum install rhosp-director-images rhosp-director-images-ipa -y
 for i in /usr/share/rhosp-director-images/ironic-python-agent-16.*.tar /usr/share/rhosp-director-images/overcloud-full-16*.tar ; do tar -xvf $i; done
 
 openstack overcloud image upload --image-path /home/stack/images/
+~~~
 
 ### 4.sh 
+~~~
+vi instackenv.json 
+~~~
 
-
-$ cat instackenv.json 
+~~~
 {
 "nodes": [
 ### controller-0
@@ -210,11 +217,13 @@ $ cat instackenv.json
 
 ]
 }
+~~~
 
 ### 5.sh
-
+~~~
 openstack overcloud node import /home/stack/instackenv.json
 
 for i in $(openstack baremetal node list -c UUID -c Name -f value | grep -i ceph | awk {'print $1'}) ; do openstack baremetal node set --property root_device='{"name":"/dev/vda"}'  $i ; done 
 
 openstack overcloud node introspect --all-manageable --provide 
+~~~
